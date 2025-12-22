@@ -12,8 +12,12 @@ def start_sender():
             
             while True:
                 print("\n" + "-"*30)
-                text = input("Enter text to send (or 'exit'): ")
-                if text.lower() == 'exit': break
+                text = input("Enter text to send (or 'exit'): ").strip()
+                if text.lower() == 'exit':
+                    break
+                if not text:
+                    print("Text cannot be empty.")
+                    continue
 
                 print("\nSelect Detection Method:")
                 print("1. Parity Bit")
@@ -32,13 +36,11 @@ def start_sender():
                     "5": "Checksum"
                 }
                 
-                method = method_map.get(choice, "CRC") # الافتراضي هو CRC
-                
-                # توليد معلومات التحكم
+                method = method_map.get(choice, "CRC")
                 control_info = generate_control_info(text, method)
+
                 print(f"Generated Control Info ({method}): {control_info}")
                 
-                # بناء وإرسال الحزمة
                 packet = f"{text}|{method}|{control_info}"
                 s.sendall(packet.encode(config.DEFAULT_ENCODING))
                 print(">> Packet Sent Successfully.")

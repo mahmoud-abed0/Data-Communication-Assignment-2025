@@ -35,13 +35,10 @@ def start_receiver():
                     # ======================
                     if method == "Hamming":
                         fixed_text, was_fixed = correct_hamming(rec_data, sent_control)
+                        final_data = fixed_text
+                        recovered = was_fixed
 
-                        if was_fixed:
-                            recomputed = generate_control_info(fixed_text, method)
-                            if recomputed == sent_control:
-                                final_data = fixed_text
-                                recovered = True
-
+                        # for display only
                         calc_control = generate_control_info(final_data, method)
 
                     # ======================
@@ -63,8 +60,14 @@ def start_receiver():
                     print(f"Sent Check Bits     : {sent_control}")
                     print(f"Computed Check Bits : {calc_control}")
 
-                    if sent_control == calc_control and not recovered:
-                        print("Status              : DATA CORRECT ✅")
+                    # ======================
+                    # Status Logic (FIXED)
+                    # ======================
+                    if sent_control == calc_control:
+                        if rec_data != final_data:
+                            print("Status              : UNDETECTED ERROR ⚠️ (Hamming Limitation)")
+                        else:
+                            print("Status              : DATA CORRECT ✅")
                     elif recovered:
                         print("Status              : DATA RECOVERED by Hamming 🛠️")
                     else:
@@ -77,3 +80,4 @@ def start_receiver():
 
 if __name__ == "__main__":
     start_receiver()
+
